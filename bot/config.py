@@ -37,6 +37,10 @@ class Settings(BaseSettings):
     review_delay_minutes: int = 120  # ask for a rating this long after the visit ends
     review_url: str | None = None  # e.g. your Google Maps review link
 
+    # Branding (optional): public image URLs
+    welcome_image_url: str | None = None  # large banner above the greeting (link preview)
+    invoice_photo_url: str | None = None  # picture on the payment card
+
     seed_demo: bool = True  # create sample services and staff on first start
 
     @cached_property

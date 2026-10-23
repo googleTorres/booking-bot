@@ -13,9 +13,11 @@ Built for barbershops, beauty salons, clinics, tutors, fitness studios, consulta
 - Only real free slots are shown: working hours, service duration, existing bookings and a minimum lead time are all taken into account
 - Each specialist has an independent schedule
 - Clients see and cancel their bookings in `/start → My bookings`
+- Optional branded banner above the greeting (large link preview, like in channels)
 
 **💳 Deposits (Telegram Payments, e.g. Stripe)**
-- Optional prepayment per service, paid inside Telegram
+- Optional prepayment per service, paid inside Telegram via the native checkout
+- Optional picture on the payment card
 - The slot is held for 15 minutes while the client pays, then released automatically
 - Payment is re-validated right before charging (slot still free, amount unchanged)
 - Cancellation policy: refundable up to N hours before the visit, the owner gets a refund note with the payment ID
@@ -69,6 +71,9 @@ tests/             # slot engine, scheduler, end-to-end flows with mocked Telegr
 
 On first start the bot creates demo services and specialists (`SEED_DEMO=true`), so you can try it right away.
 
+To try the branding, point `WELCOME_IMAGE_URL` and `INVOICE_PHOTO_URL` to the demo banner:
+`https://raw.githubusercontent.com/googleTorres/booking-bot/main/docs/banner.png`
+
 ## Configuration
 
 | Variable | Default | Description |
@@ -88,6 +93,8 @@ On first start the bot creates demo services and specialists (`SEED_DEMO=true`),
 | `FREE_CANCEL_HOURS` | `24` | Deposit is refundable if cancelled earlier |
 | `REVIEW_URL` | empty | Public review link for happy clients |
 | `REVIEW_DELAY_MINUTES` | `120` | When to ask for a rating after the visit |
+| `WELCOME_IMAGE_URL` | empty | Public image URL shown as a large banner above the greeting |
+| `INVOICE_PHOTO_URL` | empty | Public image URL shown on the payment card |
 | `DATABASE_URL` | SQLite file | Any SQLAlchemy async URL |
 
 ## Tests

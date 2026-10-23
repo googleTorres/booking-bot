@@ -225,3 +225,22 @@ async def test_other_user_cannot_cancel(sm, bot, clock):
         await client.cancel_booking(q, kb.CancelCb(booking=1, sure=True), bot, s, settings, clock)
         await s.commit()
     assert (await bookings(sm))[0].status == BookingStatus.CONFIRMED
+
+
+# ---------- branding ----------
+
+
+async def test_greeting_uses_large_banner_when_configured(bot):
+    msg = Message(message_id=1, date=NOW, chat=CHAT, from_user=USER).as_(bot)
+    await client.start(msg, make_settings(welcome_image_url="https://example.com/banner.png"))
+    preview = bot.await_args.args[0].link_preview_options
+    assert preview.url == "https://example.com/banner.png" and preview.show_above_text and preview.prefer_large_media
+
+    await client.start(msg, make_settings())
+    assert bot.await_args.args[0].link_preview_options is None
+
+
+async def test_invoice_photo(sm, bot, clock):
+    settings = make_settings(payment_provider_token="TEST:stripe", invoice_photo_url="https://example.com/i.png")
+    await confirm(sm, bot, settings, clock)
+    assert bot.send_invoice.await_args.kwargs["photo_url"] == "https://example.com/i.png"

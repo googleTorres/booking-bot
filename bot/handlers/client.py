@@ -7,7 +7,14 @@ from html import escape
 from aiogram import Bot, F, Router
 from aiogram.enums import ChatType
 from aiogram.filters import CommandStart
-from aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, LabeledPrice, Message
+from aiogram.types import (
+    CallbackQuery,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+    LabeledPrice,
+    LinkPreviewOptions,
+    Message,
+)
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -35,7 +42,11 @@ def greeting(settings: Settings) -> str:
 
 @router.message(CommandStart())
 async def start(message: Message, settings: Settings) -> None:
-    await message.answer(greeting(settings), reply_markup=kb.main_menu())
+    preview = None
+    if settings.welcome_image_url:
+        # Shows the banner as a large image above the text, and the message stays editable
+        preview = LinkPreviewOptions(url=settings.welcome_image_url, prefer_large_media=True, show_above_text=True)
+    await message.answer(greeting(settings), reply_markup=kb.main_menu(), link_preview_options=preview)
 
 
 async def _load(session: AsyncSession, service_id: int, staff_id: int) -> tuple[Service | None, Staff | None]:
@@ -210,6 +221,9 @@ async def create_booking(
         provider_token=settings.payment_provider_token.get_secret_value(),
         currency=settings.currency,
         prices=[LabeledPrice(label="Deposit", amount=service.deposit)],
+        photo_url=settings.invoice_photo_url or None,
+        photo_width=1200 if settings.invoice_photo_url else None,
+        photo_height=630 if settings.invoice_photo_url else None,
     )
     await cb.answer()
 
